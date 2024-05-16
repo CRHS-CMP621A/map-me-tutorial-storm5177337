@@ -32,6 +32,10 @@ navigator.geolocation.getCurrentPosition(
             .openPopup();
         //console.log(map)
         map.on('click', function (mapEvent) {
+
+            form.classList.remove('hidden');
+            inputDistance.focus();
+
             console.log(mapEvent)
             const lat = mapEvent.latlng.lat
             const lng = mapEvent.latlng.lng
