@@ -14,6 +14,38 @@ const inputElevation = document.querySelector('.form__input--elevation');
 let map;
 let mapEvent; //global variables
 
+//Classes
+class Workout { //parent class
+    date = new Date(); //Need's to be fixed!!!
+    id = (Date.now() + '').slice(-10);
+
+    constructor(coords, distance, duration) {
+        this.coords = coords; // [lat, lng]
+        this.distance = distance; //in km
+        this.duration = duration; //in mins
+    }
+}
+
+//child classes of Workout class
+class Running extends Workout {
+    constructor(coords, distance, duration, cadence) {
+        super(coords, distance, duration); //from Workout class
+        this.cadence = cadence;
+    }
+}
+
+class Cycling extends Workout {
+    constructor(coords, distance, duration, elevationGain) {
+        super(coords, distance, duration);
+        this.elevation = elevationGain;
+    }
+}
+
+//testing classes w' test parameters
+const run1 = new Running([39, -12], 5.2, 24, 178);
+const cycling1 = new Cycling([39, -12], 27, 95, 523);
+console.log(run1, cycling1)
+
 //navigator code
 
 navigator.geolocation.getCurrentPosition(
