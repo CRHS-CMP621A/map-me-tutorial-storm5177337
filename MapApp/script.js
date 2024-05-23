@@ -140,6 +140,9 @@ form.addEventListener('submit', function (e) {
     //Workout array testing
     console.log(workouts);
 
+    //7.1 Local Storage of Workouts Array
+    localStorage.setItem("workouts", JSON.stringify(workouts));
+
     let html;
 
     if (type === "running") {
