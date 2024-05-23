@@ -11,8 +11,11 @@ const inputDuration = document.querySelector('.form__input--duration');
 const inputCadence = document.querySelector('.form__input--cadence');
 const inputElevation = document.querySelector('.form__input--elevation');
 
+//global variables
 let map;
-let mapEvent; //global variables
+let mapEvent;
+let workout;
+let workouts = [];
 
 //Classes
 class Workout { //parent class
@@ -41,10 +44,10 @@ class Cycling extends Workout {
     }
 }
 
-//testing classes w' test parameters
-const run1 = new Running([39, -12], 5.2, 24, 178);
-const cycling1 = new Cycling([39, -12], 27, 95, 523);
-console.log(run1, cycling1)
+//testing classes w' test parameters *TESTED
+//const run1 = new Running([39, -12], 5.2, 24, 178);
+//const cycling1 = new Cycling([39, -12], 27, 95, 523);
+//console.log(run1, cycling1)
 
 //navigator code
 
@@ -81,9 +84,32 @@ navigator.geolocation.getCurrentPosition(
 // form event listener to check if submitted/completed
 form.addEventListener('submit', function (e) {
     e.preventDefault()
-    // code for adding map marker...
+    const type = inputType.value;
+    const distance = Number(inputDistance.value);
+    const duration = Number(inputDuration.value);
     const lat = mapEvent.latlng.lat
     const lng = mapEvent.latlng.lng
+
+    if (type === 'running') {
+        const cadence = Number(inputCadence.value);
+
+        //validate form data later
+
+        //Create new running object
+        workout = new Running([lat, lng], distance, duration, cadence);
+    }
+
+    if (type === 'cycling') {
+        const elevation = +inputElevation.value;
+
+        //Create new cycling object
+        workout = new Cycling([lat, lng], distance, duration, elevation);
+    }
+
+    workouts.push(workout);
+    //Workout array testing
+    console.log(workouts);
+
     L.marker([lat, lng]).addTo(map)
         .bindPopup(L.popup({
             maxWidth: 250,
@@ -94,7 +120,10 @@ form.addEventListener('submit', function (e) {
         }))
         .setPopupContent('Workout')
         .openPopup();
-
+    if (inputType.value == "cycling") { // This code will reset back to running with the correct cadence/elevation options.
+        inputCadence.closest(".form__row").classList.toggle("form__row--hidden");
+        inputElevation.closest(".form__row").classList.toggle("form__row--hidden");
+    }
     form.reset();
 });
 
