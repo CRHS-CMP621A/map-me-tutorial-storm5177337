@@ -31,16 +31,46 @@ class Workout { //parent class
 
 //child classes of Workout class
 class Running extends Workout {
+    type = "Running";
+
     constructor(coords, distance, duration, cadence) {
         super(coords, distance, duration); //from Workout class
         this.cadence = cadence;
+        this.calcPace();
+        this.setDescription();
+    }
+
+    //methods
+    calcPace() {
+        //min / km
+        this.pace = this.duration / this.distance;
+        return this.pace;
+    }
+
+    setDescription() {
+        this.description = `${this.type} on ${this.date.toDateString()}`;
     }
 }
 
 class Cycling extends Workout {
+    type = "Cycling";
+
     constructor(coords, distance, duration, elevationGain) {
         super(coords, distance, duration);
         this.elevation = elevationGain;
+        this.calcPace();
+        this.setDescription();
+    }
+
+    //methods
+    calcPace() {
+        //km / h
+        this.pace = this.distance / (this.duration / 60);
+        return this.pace;
+    }
+
+    setDescription() {
+        this.description = `${this.type} on ${this.date.toDateString()}`;
     }
 }
 
@@ -109,6 +139,62 @@ form.addEventListener('submit', function (e) {
     workouts.push(workout);
     //Workout array testing
     console.log(workouts);
+
+    let html;
+
+    if (type === "running") {
+        html = `<li class="workout workout--running" data-id=${workout.id}>
+                    <h2 class="workout__title">${workout.description}</h2>
+                    <div class="workout__details">
+                        <span class="workout__icon">🏃‍♂️</span>
+                        <span class="workout__value">${workout.distance}</span>
+                        <span class="workout__unit">km</span>
+                    </div>
+                    <div class="workout__details">
+                        <span class="workout__icon">⏱</span>
+                        <span class="workout__value">${workout.duration}</span>
+                        <span class="workout__unit">min</span>
+                    </div>
+                    <div class="workout__details">
+                        <span class="workout__icon">⚡️</span>
+                        <span class="workout__value">${workout.pace}</span>
+                        <span class="workout__unit">min/km</span>
+                    </div>
+                    <div class="workout__details">
+                        <span class="workout__icon">🦶🏼</span>
+                        <span class="workout__value">${workout.cadence}</span>
+                        <span class="workout__unit">spm</span>
+                    </div>
+                </li>`;
+    }
+
+    if (type === "cycling") {
+        html = `<li class="workout workout--cycling" data-id=${workout.id}>
+                <h2 class="workout__title">${workout.description}</h2>
+                <div class="workout__details">
+                    <span class="workout__icon">🚴‍♀️</span>
+                    <span class="workout__value">${workout.distance}</span>
+                    <span class="workout__unit">km</span>
+                </div>
+                <div class="workout__details">
+                    <span class="workout__icon">⏱</span>
+                    <span class="workout__value">${workout.duration}</span>
+                    <span class="workout__unit">min</span>
+                </div>
+                <div class="workout__details">
+                    <span class="workout__icon">⚡️</span>
+                    <span class="workout__value">${workout.pace}</span>
+                    <span class="workout__unit">km/h</span>
+                </div>
+                <div class="workout__details">
+                    <span class="workout__icon">⛰</span>
+                    <span class="workout__value">${workout.elevation}</span>
+                    <span class="workout__unit">m</span>
+                </div>
+            </li>`;
+    }
+
+    form.insertAdjacentHTML("afterend", html);
 
     L.marker([lat, lng]).addTo(map)
         .bindPopup(L.popup({
