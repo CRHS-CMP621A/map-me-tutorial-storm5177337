@@ -219,3 +219,19 @@ inputType.addEventListener('change', function () {
     inputCadence.closest('.form__row').classList.toggle('form__row--hidden');
     inputElevation.closest('.form__row').classList.toggle('form__row--hidden');
 })
+
+containerWorkouts.addEventListener("click", function (e) {
+    const workoutEl = e.target.closest(".workout");
+
+    if (!workoutEl) return; // if workout not found then return out of function
+
+    const workout = workouts.find((work) => work.id === workoutEl.dataset.id);
+
+    map.setView(workout.coords, 13, {
+        //set the map view to the location of the workout coords
+        animate: true,
+        pan: {
+            duration: 1,
+        },
+    });
+});
