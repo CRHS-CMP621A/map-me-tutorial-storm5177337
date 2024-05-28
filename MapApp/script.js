@@ -16,6 +16,7 @@ let map;
 let mapEvent;
 let workout;
 let workouts = [];
+let html;
 
 //Classes
 class Workout { //parent class
@@ -104,6 +105,90 @@ navigator.geolocation.getCurrentPosition(
         if (data) {
             workouts = data; //load any data into Workouts Array
             console.log(data);
+
+            for (let workout of workouts) {
+                let lat = workout.coords[0];
+                let lng = workout.coords[1];
+                let html;
+
+                if (workout.type === "running") {
+                    html = `<li class="workout workout--running" data-id=${workout.id}>
+                        <h2 class="workout__title">${workout.description}</h2>
+                        <div class="workout__details">
+                            <span class="workout__icon">🏃‍♂️</span>
+                            <span class="workout__value">${workout.distance}</span>
+                            <span class="workout__unit">km</span>
+                        </div>
+                        <div class="workout__details">
+                            <span class="workout__icon">⏱</span>
+                            <span class="workout__value">${workout.duration}</span>
+                            <span class="workout__unit">min</span>
+                        </div>
+                        <div class="workout__details">
+                            <span class="workout__icon">⚡️</span>
+                            <span class="workout__value">${workout.paceFixed}</span>
+                            <span class="workout__unit">min/km</span>
+                        </div>
+                        <div class="workout__details">
+                            <span class="workout__icon">🦶🏼</span>
+                            <span class="workout__value">${workout.cadence}</span>
+                            <span class="workout__unit">spm</span>
+                        </div>
+                    </li>`;
+
+                    L.marker([lat, lng])
+                        .addTo(map)
+                        .bindPopup(
+                            L.popup({
+                                maxWidth: 250,
+                                minWidth: 100,
+                                autoClose: false,
+                                closeOnClick: false,
+                                className: 'running-popup',
+                            }))
+                        .setPopupContent('Workout')
+                        .openPopup();
+                } else if (workout.type === "cycling") {
+                    html = `<li class="workout workout--cycling" data-id=${workout.id}>
+                    <h2 class="workout__title">${workout.description}</h2>
+                    <div class="workout__details">
+                        <span class="workout__icon">🚴‍♀️</span>
+                        <span class="workout__value">${workout.distance}</span>
+                        <span class="workout__unit">km</span>
+                    </div>
+                    <div class="workout__details">
+                        <span class="workout__icon">⏱</span>
+                        <span class="workout__value">${workout.duration}</span>
+                        <span class="workout__unit">min</span>
+                    </div>
+                    <div class="workout__details">
+                        <span class="workout__icon">⚡️</span>
+                        <span class="workout__value">${workout.speedFixed}</span>
+                        <span class="workout__unit">km/h</span>
+                    </div>
+                    <div class="workout__details">
+                        <span class="workout__icon">⛰</span>
+                        <span class="workout__value">${workout.elevation}</span>
+                        <span class="workout__unit">m</span>
+                    </div>
+                </li>`;
+
+                    L.marker([lat, lng])
+                        .addTo(map)
+                        .bindPopup(
+                            L.popup({
+                                maxWidth: 250,
+                                minWidth: 100,
+                                autoClose: false,
+                                closeOnClick: false,
+                                className: 'running-popup',
+                            }))
+                        .setPopupContent('Workout')
+                        .openPopup();
+                }
+                console.log(html);
+                form.insertAdjacentHTML("afterend", html);
+            }
         }
 
         L.marker(coords).addTo(map)
@@ -155,13 +240,8 @@ form.addEventListener('submit', function (e) {
     localStorage.setItem("workouts", JSON.stringify(workouts));
 
     // Render workout in sidebar for user
-    let html;
-    for (let workout of workouts) {
-        let lat = workout.coords[0];
-        let lng = workout.coords[1];
-
-        if (type === "running") {
-            html = `<li class="workout workout--running" data-id=${workout.id}>
+    if (workout.type === "running") {
+        html = `<li class="workout workout--running" data-id=${workout.id}>
                         <h2 class="workout__title">${workout.description}</h2>
                         <div class="workout__details">
                             <span class="workout__icon">🏃‍♂️</span>
@@ -185,20 +265,8 @@ form.addEventListener('submit', function (e) {
                         </div>
                     </li>`;
 
-            L.marker([lat, lng])
-                .addTo(map)
-                .bindPopup(
-                    L.popup({
-                        maxWidth: 250,
-                        minWidth: 100,
-                        autoClose: false,
-                        closeOnClick: false,
-                        className: 'running-popup',
-                    }))
-                .setPopupContent('Workout')
-                .openPopup();
-        } else if (type === "cycling") {
-            html = `<li class="workout workout--cycling" data-id=${workout.id}>
+    } else if (workout.type === "cycling") {
+        html = `<li class="workout workout--cycling" data-id=${workout.id}>
                     <h2 class="workout__title">${workout.description}</h2>
                     <div class="workout__details">
                         <span class="workout__icon">🚴‍♀️</span>
@@ -221,23 +289,9 @@ form.addEventListener('submit', function (e) {
                         <span class="workout__unit">m</span>
                     </div>
                 </li>`;
-
-            L.marker([lat, lng])
-                .addTo(map)
-                .bindPopup(
-                    L.popup({
-                        maxWidth: 250,
-                        minWidth: 100,
-                        autoClose: false,
-                        closeOnClick: false,
-                        className: 'running-popup',
-                    }))
-                .setPopupContent('Workout')
-                .openPopup();
-        }
-        console.log(html);
-        form.insertAdjacentHTML("afterend", html);
     }
+
+    form.insertAdjacentHTML("afterend", html);
 
     L.marker([lat, lng])
         .addTo(map)
@@ -251,6 +305,8 @@ form.addEventListener('submit', function (e) {
             }))
         .setPopupContent('Workout')
         .openPopup();
+
+
     if (inputType.value == "cycling") { // This code will reset back to running with the correct cadence/elevation options.
         inputCadence.closest(".form__row").classList.toggle("form__row--hidden");
         inputElevation.closest(".form__row").classList.toggle("form__row--hidden");
