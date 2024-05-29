@@ -105,14 +105,15 @@ navigator.geolocation.getCurrentPosition(
         if (data) {
             workouts = data; //load any data into Workouts Array
             console.log(data);
+        }
 
-            for (let workout of workouts) {
-                let lat = workout.coords[0];
-                let lng = workout.coords[1];
-                let html;
+        for (let workout of workouts) {
+            let lat = workout.coords[0];
+            let lng = workout.coords[1];
 
-                if (workout.type === "running") {
-                    html = `<li class="workout workout--running" data-id=${workout.id}>
+            if (workout.type === "Running") {
+
+                html = `<li class="workout workout--running" data-id=${workout.id}>
                         <h2 class="workout__title">${workout.description}</h2>
                         <div class="workout__details">
                             <span class="workout__icon">🏃‍♂️</span>
@@ -136,20 +137,20 @@ navigator.geolocation.getCurrentPosition(
                         </div>
                     </li>`;
 
-                    L.marker([lat, lng])
-                        .addTo(map)
-                        .bindPopup(
-                            L.popup({
-                                maxWidth: 250,
-                                minWidth: 100,
-                                autoClose: false,
-                                closeOnClick: false,
-                                className: 'running-popup',
-                            }))
-                        .setPopupContent('Workout')
-                        .openPopup();
-                } else if (workout.type === "cycling") {
-                    html = `<li class="workout workout--cycling" data-id=${workout.id}>
+                L.marker([lat, lng])
+                    .addTo(map)
+                    .bindPopup(
+                        L.popup({
+                            maxWidth: 250,
+                            minWidth: 100,
+                            autoClose: false,
+                            closeOnClick: false,
+                            className: 'running-popup',
+                        }))
+                    .setPopupContent('Workout')
+                    .openPopup();
+            } else if (workout.type === "Cycling") {
+                html = `<li class="workout workout--cycling" data-id=${workout.id}>
                     <h2 class="workout__title">${workout.description}</h2>
                     <div class="workout__details">
                         <span class="workout__icon">🚴‍♀️</span>
@@ -173,22 +174,21 @@ navigator.geolocation.getCurrentPosition(
                     </div>
                 </li>`;
 
-                    L.marker([lat, lng])
-                        .addTo(map)
-                        .bindPopup(
-                            L.popup({
-                                maxWidth: 250,
-                                minWidth: 100,
-                                autoClose: false,
-                                closeOnClick: false,
-                                className: 'running-popup',
-                            }))
-                        .setPopupContent('Workout')
-                        .openPopup();
-                }
-                console.log(html);
-                form.insertAdjacentHTML("afterend", html);
+                L.marker([lat, lng])
+                    .addTo(map)
+                    .bindPopup(
+                        L.popup({
+                            maxWidth: 250,
+                            minWidth: 100,
+                            autoClose: false,
+                            closeOnClick: false,
+                            className: 'running-popup',
+                        }))
+                    .setPopupContent('Workout')
+                    .openPopup();
             }
+            console.log(html);
+            form.insertAdjacentHTML("afterend", html);
         }
 
         L.marker(coords).addTo(map)
@@ -240,7 +240,7 @@ form.addEventListener('submit', function (e) {
     localStorage.setItem("workouts", JSON.stringify(workouts));
 
     // Render workout in sidebar for user
-    if (workout.type === "running") {
+    if (workout.type === "Running") {
         html = `<li class="workout workout--running" data-id=${workout.id}>
                         <h2 class="workout__title">${workout.description}</h2>
                         <div class="workout__details">
@@ -265,7 +265,7 @@ form.addEventListener('submit', function (e) {
                         </div>
                     </li>`;
 
-    } else if (workout.type === "cycling") {
+    } else if (workout.type === "Cycling") {
         html = `<li class="workout workout--cycling" data-id=${workout.id}>
                     <h2 class="workout__title">${workout.description}</h2>
                     <div class="workout__details">
