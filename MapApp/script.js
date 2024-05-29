@@ -216,6 +216,11 @@ form.addEventListener('submit', function (e) {
     const lat = mapEvent.latlng.lat
     const lng = mapEvent.latlng.lng
 
+    if (workout.distance, workout.duration, workout.cadence <= 0 || workout.distance, workout.duration, workout.cadence = NaN) {
+        alert("Please enter valid results.")
+        form.reset();
+    }
+
     if (type === 'running') {
         const cadence = Number(inputCadence.value);
 
