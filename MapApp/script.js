@@ -215,38 +215,41 @@ form.addEventListener('submit', function (e) {
     const duration = Number(inputDuration.value);
     const lat = mapEvent.latlng.lat
     const lng = mapEvent.latlng.lng
-
-    if (workout.distance, workout.duration, workout.cadence <= 0 || workout.distance, workout.duration, workout.cadence = NaN) {
-        alert("Please enter valid results.")
-        form.reset();
-    }
+    const cadence = Number(inputCadence.value);
+    const elevation = +inputElevation.value;
 
     if (type === 'running') {
-        const cadence = Number(inputCadence.value);
-
-        //validate form data later
-
         //Create new running object
         workout = new Running([lat, lng], distance, duration, cadence);
     }
 
     if (type === 'cycling') {
-        const elevation = +inputElevation.value;
-
         //Create new cycling object
         workout = new Cycling([lat, lng], distance, duration, elevation);
     }
 
-    workouts.push(workout);
-    //Workout array testing
-    console.log(workouts);
+    if (workout.type == "Running" && (distance <= 0 || duration <= 0 || cadence <= 0)) {
+        alert("Invalid input!");
 
-    //7.1 Local Storage of Workouts Array
-    localStorage.setItem("workouts", JSON.stringify(workouts));
+    } else if (workout.type == "Running" && (distance == NaN || duration == NaN || cadence == NaN)) {
+        alert("Invalid input!");
+    } else if (workout.type == "Cycling" && (distance <= 0 || duration <= 0 || elevation <= 0)) {
+        alert("Invalid input!");
+    } else if (workout.type == "Cycling" && (distance == NaN || duration == NaN || elevation == NaN)) {
+        alert("Invalid input!");
+    } else {
+        alert("Valid Input!")
 
-    // Render workout in sidebar for user
-    if (workout.type === "Running") {
-        html = `<li class="workout workout--running" data-id=${workout.id}>
+        workouts.push(workout);
+        //Workout array testing
+        console.log(workouts);
+
+        //7.1 Local Storage of Workouts Array
+        localStorage.setItem("workouts", JSON.stringify(workouts));
+
+        // Render workout in sidebar for user
+        if (workout.type === "Running") {
+            html = `<li class="workout workout--running" data-id=${workout.id}>
                         <h2 class="workout__title">${workout.description}</h2>
                         <div class="workout__details">
                             <span class="workout__icon">🏃‍♂️</span>
@@ -270,8 +273,8 @@ form.addEventListener('submit', function (e) {
                         </div>
                     </li>`;
 
-    } else if (workout.type === "Cycling") {
-        html = `<li class="workout workout--cycling" data-id=${workout.id}>
+        } else if (workout.type === "Cycling") {
+            html = `<li class="workout workout--cycling" data-id=${workout.id}>
                     <h2 class="workout__title">${workout.description}</h2>
                     <div class="workout__details">
                         <span class="workout__icon">🚴‍♀️</span>
@@ -294,29 +297,30 @@ form.addEventListener('submit', function (e) {
                         <span class="workout__unit">m</span>
                     </div>
                 </li>`;
+        }
+
+        form.insertAdjacentHTML("afterend", html);
+
+        L.marker([lat, lng])
+            .addTo(map)
+            .bindPopup(
+                L.popup({
+                    maxWidth: 250,
+                    minWidth: 100,
+                    autoClose: false,
+                    closeOnClick: false,
+                    className: 'running-popup',
+                }))
+            .setPopupContent('Workout')
+            .openPopup();
+
+
+        if (inputType.value == "cycling") { // This code will reset back to running with the correct cadence/elevation options.
+            inputCadence.closest(".form__row").classList.toggle("form__row--hidden");
+            inputElevation.closest(".form__row").classList.toggle("form__row--hidden");
+        }
+        form.reset();
     }
-
-    form.insertAdjacentHTML("afterend", html);
-
-    L.marker([lat, lng])
-        .addTo(map)
-        .bindPopup(
-            L.popup({
-                maxWidth: 250,
-                minWidth: 100,
-                autoClose: false,
-                closeOnClick: false,
-                className: 'running-popup',
-            }))
-        .setPopupContent('Workout')
-        .openPopup();
-
-
-    if (inputType.value == "cycling") { // This code will reset back to running with the correct cadence/elevation options.
-        inputCadence.closest(".form__row").classList.toggle("form__row--hidden");
-        inputElevation.closest(".form__row").classList.toggle("form__row--hidden");
-    }
-    form.reset();
 });
 
 //Event Listener Toggle form input type change. 
